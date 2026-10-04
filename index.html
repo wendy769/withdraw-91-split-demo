@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>91 提現拆單建議 · 交互演示</title>
+  <style>
+    :root {
+      --bg: #191e24;
+      --card: #23282e;
+      --line: #2c3238;
+      --text: #f7fafb;
+      --muted: #9aa3ab;
+      --dim: #7a838b;
+      --green: #155034;
+      --green-border: #25613f;
+      --blue: #5b9fd4;
+      --orange: #d0893a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "PingFang SC", "Noto Sans TC", sans-serif;
+      background: #0f1317;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      padding: 28px 20px;
+      align-items: flex-start;
+    }
+    .phone {
+      width: 390px;
+      background: var(--bg);
+      overflow: hidden;
+      position: relative;
+      min-height: 844px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: none;
+      border: 1px solid #2a3138;
+      border-radius: 12px;
+    }
+    .status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 22px 4px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+    }
+    .nav {
+      display: grid;
+      grid-template-columns: 56px 1fr 72px;
+      align-items: center;
+      padding: 10px 16px 18px;
+    }
+    .back {
+      width: 22px;
+      height: 22px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .nav .title {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .history {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #3d9a64;
+      border: 1px solid var(--green-border);
+      border-radius: 999px;
+      padding: 3px 8px 3px 6px;
+      background: transparent;
+    }
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bank {
+      padding: 0 18px 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .sbi {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .sbi-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      overflow: hidden;
+      background: #0b3a82;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+    .sbi-mark i:nth-child(1) { background: #f4c14a; }
+    .sbi-mark i:nth-child(2) { background: #0b3a82; }
+    .sbi-mark i:nth-child(3) { background: #0b3a82; }
+    .sbi-mark i:nth-child(4) { background: #f4c14a; }
+    .chev { color: var(--dim); font-size: 16px; margin-left: 2px; }
+    .card {
+      margin: 0 16px 12px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px 16px 14px;
+    }
+    .label { font-size: 14px; color: var(--muted); }
+    .amount-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin: 12px 0 14px;
+    }
+    .dollar { font-size: 34px; font-weight: 600; }
+    .amount-row input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 34px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.5px;
+    }
+    .clear {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: #3a424a;
+      color: var(--bg);
+      font-size: 13px;
+      line-height: 22px;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+    .link {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .meta {
+      font-size: 12px;
+      color: var(--dim);
+      padding: 12px 0 8px;
+      border-top: 1px solid var(--line);
+    }
+    .fee {
+      font-size: 14px;
+      color: var(--muted);
+      padding: 8px 0 0;
+    }
+    .fee b { color: var(--text); font-weight: 500; }
+    .inr {
+      text-align: right;
+      font-size: 12px;
+      color: var(--dim);
+      padding-top: 4px;
+    }
+    .free-card {
+      margin: 0 16px 16px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 15px;
+    }
+    .free-card b { color: var(--orange); font-weight: 600; }
+    .tips {
+      padding: 4px 18px 0;
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.7;
+    }
+    .tips-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .tips-title .info {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--dim);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      color: var(--dim);
+    }
+    .spacer { flex: 1; min-height: 28px; }
+    .cta-wrap { padding: 8px 16px 28px; }
+    .cta {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 24px;
+      background: var(--green);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .cta:disabled { opacity: .45; cursor: default; }
+    .mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 10, 12, .62);
+      display: none;
+      align-items: flex-end;
+      padding: 16px 16px 28px;
+      z-index: 20;
+    }
+    .mask.show { display: flex; }
+    .sheet {
+      width: 100%;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px 16px 16px;
+    }
+    .sheet h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .sheet p {
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .actions { display: flex; gap: 10px; }
+    .actions button {
+      flex: 1;
+      height: 44px;
+      border-radius: 22px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .ghost {
+      background: #2c3238;
+      border: none;
+      color: var(--text);
+    }
+    .primary {
+      background: var(--green);
+      border: none;
+      color: #fff;
+      font-weight: 500;
+    }
+    .clear.is-hidden { visibility: hidden; }
+    .screen { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .screen.is-hidden { display: none; }
+    .result {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 24px 28px;
+    }
+    .check {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--green);
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+    }
+    .result h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .result .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .result .amt {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: auto;
+    }
+    .aside {
+      width: 300px;
+      padding-top: 8px;
+    }
+    .aside h1 { font-size: 18px; margin: 0 0 8px; color: #e8eaed; }
+    .aside p { color: #9aa0a6; font-size: 13px; line-height: 1.6; }
+    .aside ol { color: #c8ccd0; font-size: 13px; line-height: 1.7; padding-left: 18px; }
+    .aside button {
+      margin-top: 8px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" id="phone">
+    <div class="status">
+      <span>22:03</span>
+      <span class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.2c2.3 0 4.4.9 6 2.3l-1.2 1.2A6.6 6.6 0 0 0 8 3.8c-1.8 0-3.4.7-4.7 1.9L2.1 4.5A8.4 8.4 0 0 1 8 2.2Zm0 3.2c1.4 0 2.7.5 3.7 1.5L10.5 8A3.3 3.3 0 0 0 8 7c-.9 0-1.8.4-2.4 1L4.3 6.9A5 5 0 0 1 8 5.4Zm0 3.3c.6 0 1.1.2 1.5.6L8 11.2 6.5 9.3c.4-.4.9-.6 1.5-.6Z"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.6" y="1.2" width="21" height="9.6" rx="2.2" stroke="currentColor" stroke-width="1.2"/><rect x="2.2" y="2.8" width="16.2" height="6.4" rx="1" fill="currentColor"/><rect x="22.2" y="4" width="1.8" height="4" rx="0.6" fill="currentColor"/></svg>
+      </span>
+    </div>
+    <div class="screen" id="formScreen">
+    <div class="nav">
+      <svg class="back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5L8 12l7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="title">提現</div>
+      <div class="history">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="6" cy="6" r="4.4"/><path d="M6 3.6V6l1.8 1.2" stroke-linecap="round"/></svg>
+        往常
+      </div>
+    </div>
+    <div class="bank row-between">
+      <span>到賬銀行卡</span>
+      <span class="sbi">
+        <span class="sbi-mark"><i></i><i></i><i></i><i></i></span>
+        State Bank of India
+        <span class="chev">›</span>
+      </span>
+    </div>
+    <div class="card">
+      <div class="label">金額</div>
+      <div class="amount-row">
+        <span class="dollar">$</span>
+        <input id="amount" value="310" inputmode="decimal" />
+        <button class="clear" id="clear" type="button">×</button>
+        <button class="link" id="all" type="button">全部</button>
+      </div>
+      <div class="meta row-between"><span>可提金額: $0.00</span><span>1USD ≈ 94 INR</span></div>
+      <div class="fee row-between"><span>手續費</span><b>$0</b></div>
+      <div class="fee row-between"><span>你收到</span><b id="receive">$310</b></div>
+      <div class="inr" id="inr">≈ 29140 INR</div>
+    </div>
+    <div class="free-card row-between">
+      <span>剩餘免費次數</span>
+      <b>2</b>
+    </div>
+    <div class="tips">
+      <div class="tips-title"><span class="info">i</span> 提現說明</div>
+      1. 首次提現請實名並綁定本人銀行卡； 2. 實名信息不可更改，本人銀行卡可變更； 3. 單筆提現金額最低5美金；最高500；提現手續費1美金/筆； 4. 工作日提現時間 09:00-18:00，當天可到賬，銀行原因偶爾會有延遲；節假日或者工作日18:00以後的提現，第二個工作日處理； 5. 如有持倉，只可提現可用餘額的1/3部分；無持倉狀態，可用餘額可全部提取； 6. 如您有更多問題，可聯繫官方客服解決；
+    </div>
+    <div class="spacer"></div>
+    <div class="cta-wrap">
+      <button class="cta" id="submit" type="button">提現</button>
+    </div>
+    <div class="mask" id="mask">
+      <div class="sheet">
+        <h2>到賬時效提示</h2>
+        <p>提現金額較大可能影響到賬時效，單筆提現低於100美金可以更快到賬</p>
+        <div class="actions">
+          <button class="ghost" id="cancel" type="button">取消提現</button>
+          <button class="primary" id="continue" type="button">繼續提現</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast" hidden></div>
+    </div>
+    <div class="screen is-hidden" id="resultScreen">
+      <div class="nav">
+        <svg class="back" id="resultBack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5L8 12l7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="title">提現</div>
+        <div></div>
+      </div>
+      <div class="result">
+        <div class="check">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.6"><path d="M8 16.5 13.2 22 24 10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2>提現提交成功</h2>
+        <div class="sub">提現申請已提交，請等待到賬</div>
+        <div class="amt" id="resultAmount">$310</div>
+        <div class="cta-wrap" style="width:100%">
+          <button class="cta" id="done" type="button">完成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="aside">
+    <h1>演示说明</h1>
+    <p>右侧对照现有 APP 提现页风格：背景 #191e24，卡片 #23282e，主按钮森林绿 #155034。金额已预填 310 美金。</p>
+    <ol>
+      <li>点击绿色「提现」</li>
+      <li>命中拆单建议后弹窗</li>
+      <li>「继续提现」：离开本页，进入「提现提交成功」</li>
+      <li>「取消提现」：留在本页，金额清空为初始空状态</li>
+    </ol>
+    <button type="button" id="reset">重置演示</button>
+    <p id="log">当前：待提交</p>
+  </aside>
+  <script>
+    const amountEl = document.getElementById("amount");
+    const receiveEl = document.getElementById("receive");
+    const inrEl = document.getElementById("inr");
+    const mask = document.getElementById("mask");
+    const toast = document.getElementById("toast");
+    const submit = document.getElementById("submit");
+    const clearBtn = document.getElementById("clear");
+    const log = document.getElementById("log");
+    const formScreen = document.getElementById("formScreen");
+    const resultScreen = document.getElementById("resultScreen");
+    const resultAmount = document.getElementById("resultAmount");
+    const THRESHOLD = 300;
+
+    function syncReceive() {
+      const raw = amountEl.value;
+      const n = Number(raw || 0);
+      const safe = Number.isFinite(n) ? n : 0;
+      receiveEl.textContent = "$" + safe;
+      inrEl.textContent = "≈ " + Math.round(safe * 94) + " INR";
+      clearBtn.classList.toggle("is-hidden", raw === "");
+    }
+
+    function showForm() {
+      formScreen.classList.remove("is-hidden");
+      resultScreen.classList.add("is-hidden");
+    }
+
+    function showSuccess(amount) {
+      mask.classList.remove("show");
+      resultAmount.textContent = "$" + amount;
+      formScreen.classList.add("is-hidden");
+      resultScreen.classList.remove("is-hidden");
+    }
+
+    function clearAmount() {
+      amountEl.value = "";
+      syncReceive();
+    }
+
+    amountEl.addEventListener("input", () => {
+      amountEl.value = amountEl.value.replace(/[^\d.]/g, "");
+      syncReceive();
+    });
+    clearBtn.onclick = () => clearAmount();
+    document.getElementById("all").onclick = () => { amountEl.value = "0"; syncReceive(); };
+
+    function showToast(text) {
+      toast.hidden = false;
+      toast.textContent = text;
+      setTimeout(() => { toast.hidden = true; }, 2200);
+    }
+
+    submit.onclick = () => {
+      const n = Number(amountEl.value || 0);
+      if (!amountEl.value) return;
+      submit.disabled = true;
+      submit.textContent = "校驗中";
+      log.textContent = "当前：提现服务基础校验（91 / 开关 / 阈值）";
+      setTimeout(() => {
+        submit.disabled = false;
+        submit.textContent = "提現";
+        if (n >= THRESHOLD) {
+          mask.classList.add("show");
+          log.textContent = "当前：已弹窗，等待用户选择。提示不拦截能力。";
+        } else {
+          showSuccess(amountEl.value);
+          log.textContent = "当前：未命中建议，进入提现提交成功页";
+        }
+      }, 500);
+    };
+
+    document.getElementById("continue").onclick = () => {
+      const submitted = amountEl.value || "0";
+      mask.classList.remove("show");
+      log.textContent = "当前：用户选择继续提现，离开提现页";
+      setTimeout(() => {
+        showSuccess(submitted);
+        log.textContent = "结果：提现提交成功，已离开提现填写页";
+      }, 350);
+    };
+
+    document.getElementById("cancel").onclick = () => {
+      mask.classList.remove("show");
+      clearAmount();
+      toast.hidden = true;
+      log.textContent = "结果：取消提现 · 留在本页，金额已清空";
+    };
+
+    function resetDemo() {
+      showForm();
+      amountEl.value = "310";
+      syncReceive();
+      mask.classList.remove("show");
+      toast.hidden = true;
+      submit.disabled = false;
+      submit.textContent = "提現";
+      log.textContent = "当前：待提交";
+    }
+
+    document.getElementById("reset").onclick = resetDemo;
+    document.getElementById("done").onclick = resetDemo;
+    document.getElementById("resultBack").onclick = resetDemo;
+  </script>
+</body>
+</html>
